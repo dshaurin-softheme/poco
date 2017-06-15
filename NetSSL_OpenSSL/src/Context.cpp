@@ -131,8 +131,12 @@ void Context::init(const Params& params)
 				errCode = SSL_CTX_load_verify_locations(_pSSLContext, Poco::Path::transcode(params.caLocation).c_str(), 0);
 			if (errCode != 1)
 			{
-				std::string msg = Utility::getLastError();
-				throw SSLContextException(std::string("Cannot load CA file/directory at ") + params.caLocation, msg);
+				unsigned long errCode = ERR_get_error();
+				if (errCode)
+				{
+					std::string msg = Utility::getErrorMessage(errCode);
+					throw SSLContextException(std::string("Cannot load CA file/directory at ") + params.caLocation, msg);
+				}
 			}
 		}
 
@@ -141,8 +145,12 @@ void Context::init(const Params& params)
 			errCode = SSL_CTX_set_default_verify_paths(_pSSLContext);
 			if (errCode != 1)
 			{
-				std::string msg = Utility::getLastError();
-				throw SSLContextException("Cannot load default CA certificates", msg);
+				unsigned long errCode = ERR_get_error();
+				if (errCode)
+				{
+					std::string msg = Utility::getErrorMessage(errCode);
+					throw SSLContextException("Cannot load default CA certificates", msg);
+				}
 			}
 		}
 
@@ -151,8 +159,12 @@ void Context::init(const Params& params)
 			errCode = SSL_CTX_use_PrivateKey_file(_pSSLContext, Poco::Path::transcode(params.privateKeyFile).c_str(), SSL_FILETYPE_PEM);
 			if (errCode != 1)
 			{
-				std::string msg = Utility::getLastError();
-				throw SSLContextException(std::string("Error loading private key from file ") + params.privateKeyFile, msg);
+				unsigned long errCode = ERR_get_error();
+				if (errCode)
+				{
+					std::string msg = Utility::getErrorMessage(errCode);
+					throw SSLContextException(std::string("Error loading private key from file ") + params.privateKeyFile, msg);
+				}
 			}
 		}
 
@@ -161,8 +173,12 @@ void Context::init(const Params& params)
 			errCode = SSL_CTX_use_certificate_chain_file(_pSSLContext, Poco::Path::transcode(params.certificateFile).c_str());
 			if (errCode != 1)
 			{
-				std::string errMsg = Utility::getLastError();
-				throw SSLContextException(std::string("Error loading certificate from file ") + params.certificateFile, errMsg);
+				unsigned long errCode = ERR_get_error();
+				if (errCode)
+				{
+					std::string errMsg = Utility::getErrorMessage(errCode);
+					throw SSLContextException(std::string("Error loading certificate from file ") + params.certificateFile, errMsg);
+				}
 			}
 		}
 

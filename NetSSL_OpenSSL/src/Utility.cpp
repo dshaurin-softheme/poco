@@ -53,7 +53,12 @@ std::string Utility::convertCertificateError(long errCode)
 
 std::string Utility::getLastError()
 {
-	unsigned long errCode = ERR_get_error();
+	return Utility::getErrorMessage(ERR_get_error());
+}
+
+
+std::string Utility::getErrorMessage(unsigned long errCode)
+{
 	if (errCode != 0)
 	{
 		char buffer[256];

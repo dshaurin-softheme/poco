@@ -42,6 +42,9 @@ public:
 
 	static std::string getLastError();
 		/// Returns the last error from the error stack
+	
+	static std::string getErrorMessage(unsigned long errCode);
+		/// Returns an error message corresponding to the error code
 
 	static void clearErrorStack();
 		/// Clears the error stack
